@@ -1,15 +1,17 @@
 <script>
-    let datafile;
+    let files;
 </script>
 
 <h1>Welcome to SvelteKit</h1>
 
 <label for="fileupload">Upload data:</label>
-<input bind:datafile id="fileupload" type="file"/>
+<input bind:files id="fileupload" type="file"/>
 
 {#if file}
     <h2>Got file</h2>
-    {file.name}
+    {#each Array.from(files) as file}
+		<p>{file.name} ({file.size} bytes)</p>
+	{/each}
 {/if}
 
 <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
