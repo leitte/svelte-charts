@@ -7,7 +7,7 @@
 <label for="fileupload">Upload data:</label>
 <input bind:files id="fileupload" type="file"/>
 
-{#if file}
+{#if files}
     <h2>Got file</h2>
     {#each Array.from(files) as file}
 		<p>{file.name} ({file.size} bytes)</p>
