@@ -35,7 +35,7 @@
 
 <p>Scatterplot {x} vs. {y}</p>
 
-  <svg width={width} height={height}>
+  <svg id="svg" width={width} height={height}>
     <g bind:this={xAxis} transform="translate(0,{height - marginBottom})" />
     <g bind:this={yAxis} transform="translate({marginLeft},0)" />
     <text class="x label" x={width-marginRight} y={height-6-marginBottom} text-anchor="end">{x}</text>
