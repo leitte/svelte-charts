@@ -30,7 +30,7 @@
     }
 </script>
 
-<section class="section">
+<!-- <section class="section" id="configuration">
     <p class="title">Configure your chart</p>
     <p class="subtitle">Specify which data to show and choose a chart type.</p>
 
@@ -56,7 +56,7 @@
             </div>
         </div>
     </div>
-</section>
+</section> -->
 
 <section class="section has-background-white-bis">
     <p class="title">Visualize</p>

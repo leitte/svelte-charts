@@ -4,6 +4,7 @@
     export let data;
     export let x;
     export let y;
+    export let color;
     export let width = 640;
     export let height = 400;
     export let marginTop = 20;
@@ -14,6 +15,7 @@
 
     let xScale;
     let yScale;
+    let colorScale;
     let xAxis;
     let yAxis;
 
