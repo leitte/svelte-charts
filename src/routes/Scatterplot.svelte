@@ -65,7 +65,7 @@
     });
 
     async function load_theme() {
-        const response = await fetch('/static/chart_theme.yaml');
+        const response = await fetch('chart_theme.yaml');
         const theme_text = await response.text();
         chart_theme = YAML.parse(theme_text);
         console.log("### chart theme", chart_theme)
