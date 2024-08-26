@@ -1,0 +1,10 @@
+svg_font-family: Roboto, sans-serif
+#text_font-size: 1em
+svg_font-size: 12px
+chart_background-color: white
+chart-title_font-size: 160%
+chart-title_font-weight: 600
+chart-title_fill: black
+chart-subtitle_font-size: 120%
+axis-label_fill: black
+tick-label_font-size: 80%

@@ -90,8 +90,9 @@
                 </div>
             </div>
         </div>
-        <button class="button is-primary"
-            on:click={() => saveSvg(document.getElementById("svg"), 'test.svg')}>
+
+        <button class="button is-primary mt-5"
+            on:click={() => saveSvg(document.getElementById("chart"), 'test.svg')}>
             Download svg
         </button>
     </div>

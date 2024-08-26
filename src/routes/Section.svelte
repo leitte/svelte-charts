@@ -10,7 +10,7 @@
         <slot name="subtitle"/>
     </p>
 
-    <div class="columns">
+    <div class="columns is-5">
         <div class="column is-one-third">
             <slot name="menu" />
         </div>
