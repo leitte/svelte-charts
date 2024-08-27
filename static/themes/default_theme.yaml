@@ -1,0 +1,9 @@
+chart_background-color: white
+chart_border: 1px solid gray
+chart_width: 640
+chart_height: 400
+chart_gap-size: 6
+chart-title_font-size: 160%
+chart-title_font-weight: 600
+chart-title_fill: black
+axis-label_font-size: 80%

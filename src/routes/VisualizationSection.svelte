@@ -1,30 +1,53 @@
 <script>
     import Section from "./Section.svelte";
     import Scatterplot from "./Scatterplot.svelte";
-    import { data, attributes } from "./store";
+    import { data, attributes, title, subtitle, width, height, gapSize } from "./store";
+    import { page } from "$app/stores";
+    import Chart from "./Chart.svelte";
+    import MenuParameters from "./MenuParameters.svelte";
+    import MenuAnnotation from "./MenuAnnotation.svelte";
+    import MenuTheme from "./MenuTheme.svelte";
+    import { onMount } from "svelte";
+    import { loadTheme } from "$lib/charting";
+    import XAxis from "./xAxis.svelte";
+    import Scatterplot2 from "./Scatterplot2.svelte";
 
     let activeAttributes = [];
     let xAttribute;
     let yAttribute;
     let colorAttribute = "None";
 
+    let chartTheme;
 
+    $: hash = $page.url.hash;
     $: $attributes && updateChartSettings();
 
+    onMount(async () => {
+        chartTheme = await loadTheme();
+    });
+
     function updateChartSettings() {
-        const activeNumAttributes = Object.entries($attributes).filter(([key,value]) => (value.dataType === "number") && (value?.active)).map(([key]) => key);
-        activeAttributes = Object.entries($attributes).filter(([key,value]) => (value?.active)).map(([key]) => key);
-        console.log("active", activeAttributes)
+        const activeNumAttributes = Object.entries($attributes)
+            .filter(
+                ([key, value]) => value.dataType === "number" && value?.active,
+            )
+            .map(([key]) => key);
+        activeAttributes = Object.entries($attributes)
+            .filter(([key, value]) => value?.active)
+            .map(([key]) => key);
+        console.log("active", activeAttributes);
         xAttribute = activeNumAttributes[0] || xAttribute;
         yAttribute = activeNumAttributes[1] || yAttribute;
-        return true
+        return true;
     }
 
     function saveSvg(svgEl, name) {
         svgEl.setAttribute("xmlns", "http://www.w3.org/2000/svg");
         var svgData = svgEl.outerHTML;
         var preface = '<?xml version="1.0" standalone="no"?>\r\n';
-        var svgBlob = new Blob([preface, svgData], {type:"image/svg+xml;charset=utf-8"});
+        var svgBlob = new Blob([preface, svgData], {
+            type: "image/svg+xml;charset=utf-8",
+        });
         var svgUrl = URL.createObjectURL(svgBlob);
         var downloadLink = document.createElement("a");
         downloadLink.href = svgUrl;
@@ -37,69 +60,63 @@
 
 <Section id="visualization">
     <span slot="title">Visualize</span>
-    <span slot="subtitle">Create a chart for your data.</span>
+    <span slot="subtitle">Create a chart for your data.}</span>
     <div slot="menu">
-        <div class="field is-horizontal">
-            <div class="field-label">
-                <label class="label">x-attribute</label>
-            </div>
-            <div class="field-body">
-                <div class="field">
-                    <div class="control">
-                        <div class="select is-fullwidth">
-                            <select bind:value={xAttribute}>
-                                <option>{xAttribute}</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="field is-horizontal">
-            <div class="field-label">
-                <label class="label">y-attribute</label>
-            </div>
-            <div class="field-body">
-                <div class="field">
-                    <div class="control">
-                        <div class="select is-fullwidth">
-                            <select bind:value={yAttribute}>
-                                <option>{yAttribute}</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="field is-horizontal">
-            <div class="field-label">
-                <label class="label">color</label>
-            </div>
-            <div class="field-body">
-                <div class="field">
-                    <div class="control">
-                        <div class="select is-fullwidth">
-                            <select bind:value={colorAttribute}>
-                                <option>None</option>
-                            {#each activeAttributes as attribute}
-                                <option>{attribute}</option>
-                            {/each}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="tabs is-boxed is-small">
+            <ul>
+                <li class={hash === "#parameters" ? "is-active" : ""}>
+                    <a href="#parameters">Chart</a>
+                </li>
+                <li class={hash === "#annotation" ? "is-active" : ""}>
+                    <a href="#annotation">Annotation</a>
+                </li>
+                <li class={hash === "#theme" ? "is-active" : ""}>
+                    <a href="#theme">Theme</a>
+                </li>
+            </ul>
         </div>
 
-        <button class="button is-primary mt-5"
-            on:click={() => saveSvg(document.getElementById("chart"), 'test.svg')}>
+        {#if hash === "#parameters"}
+            <MenuParameters
+                bind:width={$width}
+                bind:height={$height}
+                bind:gapSize={$gapSize}
+                bind:xAttribute
+                bind:yAttribute
+                bind:colorAttribute
+                bind:activeAttributes
+            />
+        {:else if hash === "#annotation"}
+            <MenuAnnotation bind:title={$title} bind:subtitle={$subtitle} />
+        {:else if hash === "#theme"}
+            <MenuTheme theme={chartTheme} />
+        {/if}
+
+        <button
+            class="button is-primary mt-5"
+            on:click={() =>
+                saveSvg(document.getElementById("chart"), "test.svg")}
+        >
             Download svg
         </button>
     </div>
 
     <div slot="content">
-        {#if ($data.length > 0) && xAttribute && yAttribute}
+        <Chart
+            title={$title}
+            subtitle={$subtitle}
+            width={$width}
+            height={$height}
+        >
+            <Scatterplot2 data={$data} x={xAttribute} y={yAttribute} color={colorAttribute} size=5 let:myvar={xtext}>
+                {xtext}
+            </Scatterplot2>
+            <!-- <XAxis slot="xAxis" attribute={xAttribute} data={$data} /> -->
+
+        </Chart>
+
+        <!-- {#if ($data.length > 0) && xAttribute && yAttribute}
             <Scatterplot data={$data} x={xAttribute} y={yAttribute} color={colorAttribute}/>
-        {/if}
+        {/if} -->
     </div>
 </Section>
