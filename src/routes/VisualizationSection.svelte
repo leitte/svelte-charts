@@ -92,7 +92,7 @@
             </ul>
         </div>
 
-        {#if hash === "#parameters"}
+        {#if !hash || (hash === "#parameters")}
             <MenuParameters
                 bind:width={$width}
                 bind:height={$height}
