@@ -29,7 +29,7 @@ function groupStyleProperties (theme) {
 }
 
 function stringifyStyle (style) {
-    const classes = ['axis-label', 'tick-label'];
+    const classes = ['axis-label', 'tick-label', 'chart-link'];
     let styleString = "";
     for (const [key, value] of Object.entries(style)) {
         let prefix = classes.includes(key) ? '.' : '#';

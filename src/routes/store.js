@@ -12,3 +12,6 @@ export const gapSize = writable(6);
 export const marginLeft = writable(0);
 export const marginBottom = writable(0);
 export const marginTop = writable(0);
+
+export const xAxisRangeMin = writable(0);
+export const xAxisRangeMax = writable(0);

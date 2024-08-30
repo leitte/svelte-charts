@@ -1,24 +1,37 @@
 <script>
-    import { onMount } from 'svelte';
+    import { getContext, onMount, setContext } from 'svelte';
     import { createStyle, loadTheme } from '$lib/charting';
-    import { marginTop, gapSize } from './store';
+    import { marginTop, marginBottom, gapSize } from './store';
+    import { writable } from 'svelte/store';
 
     let chartTheme;
     let chartStyle;
 
-    export let width = 150;
-    export let height = 150;
+    export let width;
+    export let height;
     export let title;
     export let subtitle;
+    export let notes;
+    export let dataSource;
     export let xAttribute;
 
     let chartIsVisible;
     //let marginTop = 0;
 
-    $: width = chartTheme?.chart_width || width;
-    $: height = chartTheme?.chart_height || height;
+    setContext('width', writable(width));
+    setContext('height', writable(height));
+    setContext('plotWidth', writable(width - 2*$gapSize));
+    setContext('plotHeight', writable(height - $marginTop - $marginBottom))
 
-    $: chartIsVisible && (title || subtitle || $gapSize) && updateHeader();
+    $: getContext('width').set(width);
+    $: getContext('height').set(height);
+    $: getContext('plotWidth').set(width - 2*$gapSize)
+    $: getContext('plotHeight').set(height - $marginTop - $marginBottom)
+
+    //$: width = chartTheme?.chart_width || width;
+    //$: height = chartTheme?.chart_height || height;
+
+    $: chartIsVisible && (title || subtitle || notes || $gapSize || width || height) && updateHeader();
 
     onMount(async () => {
         chartTheme = await loadTheme();
@@ -28,22 +41,9 @@
     })
 
     function updateHeader () {
-        let marginTop_tmp = 0;
-
-        // position title and adjust margin
-        let titleElement = document.getElementById('chart-title');
-        if (titleElement) {
-            marginTop_tmp += titleElement.getBBox().height;
-            titleElement.setAttribute('y', marginTop_tmp);
-        }
-
-        // position subtitle and adjust margin
-        let subtitleElement = document.getElementById('chart-subtitle');
-        if (subtitleElement) {
-            subtitleElement.setAttribute('y', marginTop_tmp + $gapSize);
-            marginTop_tmp += subtitleElement.getBBox().height + $gapSize;
-        }
-        $marginTop = $gapSize + marginTop_tmp + $gapSize;
+        $marginTop = $gapSize + (document.getElementById('header')?.getBBox().height || 0);
+        $marginBottom = $gapSize + (document.getElementById('footer')?.getBBox().height || 0);
+        getContext('plotHeight').set(height - $marginTop - $marginBottom);
     }
 
 </script>
@@ -51,20 +51,32 @@
 <svg id="chart" width={width} height={height}>
     {@html chartStyle}
     <g id="header" transform="translate({$gapSize},{$gapSize})">
-        <text id="chart-title">{title}</text>
-        <text id="chart-subtitle" style:white-space="normal">
-            {#each subtitle.replace(/\\n/g, '\n').split('\n') as line}
-                <tspan x="0" dy="{1.2}em">{line}</tspan>
+        <text >
+            <tspan id="chart-title" alignment-baseline="text-before-edge">{title}</tspan>
+        </text>
+        <text id="chart-subtitle">
+            {#each subtitle.replace(/\\n/g, '\n').split('\n') as line, i}
+                <tspan x="0" dy="{i === 0 ? 2 : 1.2}em" alignment-baseline="text-before-edge">{line}</tspan>
             {/each}
         </text>
     </g>
-    <g id="chart" transform="translate(0,{$marginTop})">
+    <g id="plot" transform="translate({$gapSize},{$marginTop+$gapSize})">
         <slot></slot>
     </g>
-    <g id="footer">
+    <g id="footer" transform="translate({$gapSize},{height-$gapSize})">
         <slot name="xAxis" />
+        <text  alignment-baseline="text-before-edge">
+            <tspan id="chart-notes" 
+                alignment-baseline="text-after-edge"
+                dy="-1.3em"
+            >{notes}</tspan>
+        </text>
+        <text id="chart-references">
+            <tspan alignment-baseline="text-after-edge">Source:</tspan>
+            <a href="" class="chart-link">
+                <tspan alignment-baseline="text-after-edge">{dataSource}</tspan>
+            </a>
+        </text>
     </g>
 </svg>
-<p class="block">
-    {subtitle}
-</p>
+

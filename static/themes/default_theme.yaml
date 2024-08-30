@@ -6,4 +6,10 @@ chart_gap-size: 6
 chart-title_font-size: 160%
 chart-title_font-weight: 600
 chart-title_fill: black
+chart-subtitle_fill: gray
+chart-references_fill: gray
+chart-references_font-size: 70%
+chart-link_fill: "#1E90FF"
+chart-notes_fill: "#333"
+chart-notes_font-size: 80%
 axis-label_font-size: 80%

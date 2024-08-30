@@ -1,6 +1,5 @@
 <script>
-    import { active } from "d3";
-import Section from "./Section.svelte";
+    import Section from "./Section.svelte";
     import { data, attributes } from "./store";
 </script>
 

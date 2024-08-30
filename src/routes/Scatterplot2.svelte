@@ -1,6 +1,7 @@
 <script>
     import * as d3 from "d3";
-    import { width, height, marginLeft, marginBottom, marginTop, gapSize } from "./store";
+    import { marginLeft, marginTop, gapSize } from "./store";
+    import { getContext } from "svelte";
 
     export let data;
     export let x;
@@ -8,11 +9,17 @@
     export let color;
     export let size;
 
+    export let xAxisRangeMin = 0;
+
+    const width = getContext('width');
+    const height = getContext('height');
+    const plotWidth = getContext('plotWidth');
+    const plotHeight = getContext('plotHeight');
+
     let offset = 4;
 
-    $: plotHeight = $height - $marginTop;
-    $: plotWidth = $width;
-
+    const mywidth = getContext('width');
+    let marginBottom = 0;
 
     let myvar = "hello world";
     let xScale;
@@ -20,21 +27,23 @@
     let xAxis;
     let yAxis;
 
-    $: if (x || y) {
+    $: if (x || y || xAxisRangeMin || $plotHeight || $plotWidth) {
         // do the layout
         updateCoordinateSystem();
         // compute sizes for offset
-        $marginBottom = $gapSize + (xAxis?.getBBox().height || 0);
+        marginBottom = (xAxis?.getBBox().height || 0);
         $marginLeft = $gapSize + (yAxis?.getBBox().width || 0);
         // apply the offset
         updateCoordinateSystem();
     }
 
     function updateCoordinateSystem () {
-        xScale = d3.scaleLinear(d3.extent(data, (row) => row[x]),
-                                [$marginLeft + $gapSize, $width - 2*$gapSize]);
+        const range = d3.extent(data, (row) => row[x]);
+
+        xScale = d3.scaleLinear([xAxisRangeMin,range[1]],
+                                [$marginLeft + $gapSize, $plotWidth-$gapSize]);
         yScale = d3.scaleLinear(d3.extent(data, (row) => row[y]),
-                                [$gapSize, plotHeight-$marginBottom - $gapSize]);
+                                [$gapSize, $plotHeight - marginBottom - $gapSize]);
         d3.select(xAxis).call(d3.axisBottom(xScale));
         d3.select(yAxis).call(d3.axisLeft(yScale));
     }
@@ -44,14 +53,14 @@
 <slot {myvar}></slot>
 
 {#if x}
-    <g transform="translate(0,{plotHeight-$marginBottom})">
+    <g transform="translate(0,{$plotHeight-marginBottom})">
         <g id="x-axis" class="axis tick-label" bind:this={xAxis} />
-        <path stroke="currentColor" d="M{$marginLeft},{0}H{plotWidth-$gapSize}" />
+        <path stroke="currentColor" d="M{$marginLeft},{0}H{$plotWidth}" />
         <text 
             class="axis-label"  
             text-anchor="end" 
             alignment-baseline="text-after-edge" 
-            x={plotWidth-offset} 
+            x={$plotWidth-offset} 
             y={-offset}
         >
             {x}
@@ -62,7 +71,7 @@
 {#if y}
     <g transform="translate({$marginLeft},0)">
         <g id="y-axis" class="axis" bind:this={yAxis}/>
-        <path stroke="currentColor" d="M{0},{0}V{plotHeight-$marginBottom}" />
+        <path stroke="currentColor" d="M{0},{0}V{$plotHeight-marginBottom}" />
         <text 
             class="axis-label" 
             alignment-baseline="text-before-edge"
@@ -71,11 +80,12 @@
     </g>    
 {/if}
 
+<text x=100 y=100>{$mywidth}</text>
 
 <g fill="white" stroke="currentColor" stroke-width="1.5">
     {#each data as d, i}
         <circle id="{i}" 
-            cx={x ? xScale(d[x]) : $marginLeft} 
-            cy={y ? yScale(d[y]) : plotHeight - $marginBottom} stroke="black" r="2.5"/>
+            cx={x ? xScale(d[x]) || $marginLeft : $marginLeft} 
+            cy={y ? yScale(d[y]) || ($plotHeight - marginBottom) : $plotHeight - marginBottom} stroke="black" r="2.5"/>
     {/each}
 </g>
