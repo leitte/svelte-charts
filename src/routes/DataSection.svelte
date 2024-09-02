@@ -111,7 +111,7 @@
                         on:click={() => loadData(url, true)}
                     >
                         <span class="file-icon">
-                            <i class="fa-regular fa-cloud-arrow-down"></i>
+                            <i class="fas fa-cloud-arrow-down"></i>
                         </span>
                         <span class="file-label has-text-weight-normal">Load file</span>
                         <span style:opacity="0.0">pe</span>
