@@ -51,10 +51,10 @@
 <svg id="chart" width={width} height={height}>
     {@html chartStyle}
     <g id="header" transform="translate({$gapSize},{$gapSize})">
-        <text >
+        <text dominant-baseline="hanging">
             <tspan id="chart-title" alignment-baseline="text-before-edge">{title}</tspan>
         </text>
-        <text id="chart-subtitle">
+        <text id="chart-subtitle" dominant-baseline="hanging">
             {#each subtitle.replace(/\\n/g, '\n').split('\n') as line, i}
                 <tspan x="0" dy="{i === 0 ? 2 : 1.2}em" alignment-baseline="text-before-edge">{line}</tspan>
             {/each}
