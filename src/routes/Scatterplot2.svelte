@@ -69,7 +69,7 @@
         <path stroke="currentColor" d="M{0},{0}V{$plotHeight-marginBottom}" />
         <text 
             class="axis-label" 
-            alignment-baseline="text-before-edge"
+            dominant-baseline="hanging"
             x={$gapSize}
         >{y}</text>
     </g>    

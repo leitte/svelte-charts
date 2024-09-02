@@ -65,7 +65,7 @@
     </g>
     <g id="footer" transform="translate({$gapSize},{height-$gapSize})">
         <slot name="xAxis" />
-        <text  alignment-baseline="text-before-edge">
+        <text>
             <tspan id="chart-notes" 
                 alignment-baseline="text-after-edge"
                 dy="-1.3em"
