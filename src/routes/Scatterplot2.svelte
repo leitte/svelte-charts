@@ -11,14 +11,9 @@
 
     export let xAxisRangeMin = 0;
 
-    const width = getContext('width');
-    const height = getContext('height');
     const plotWidth = getContext('plotWidth');
     const plotHeight = getContext('plotHeight');
 
-    let offset = 4;
-
-    const mywidth = getContext('width');
     let marginBottom = 0;
 
     let myvar = "hello world";
@@ -31,8 +26,8 @@
         // do the layout
         updateCoordinateSystem();
         // compute sizes for offset
-        marginBottom = (xAxis?.getBBox().height || 0);
-        $marginLeft = $gapSize + (yAxis?.getBBox().width || 0);
+        marginBottom = xAxis?.getBBox().height || 0;
+        $marginLeft = yAxis?.getBBox().width || 0;
         // apply the offset
         updateCoordinateSystem();
     }
@@ -41,7 +36,7 @@
         const range = d3.extent(data, (row) => row[x]);
 
         xScale = d3.scaleLinear([xAxisRangeMin,range[1]],
-                                [$marginLeft + $gapSize, $plotWidth-$gapSize]);
+                                [$marginLeft + $gapSize, $plotWidth - $gapSize]);
         yScale = d3.scaleLinear(d3.extent(data, (row) => row[y]),
                                 [$gapSize, $plotHeight - marginBottom - $gapSize]);
         d3.select(xAxis).call(d3.axisBottom(xScale));
@@ -60,8 +55,8 @@
             class="axis-label"  
             text-anchor="end" 
             alignment-baseline="text-after-edge" 
-            x={$plotWidth-offset} 
-            y={-offset}
+            x={$plotWidth-$gapSize} 
+            y={-$gapSize}
         >
             {x}
         </text>
@@ -75,12 +70,11 @@
         <text 
             class="axis-label" 
             alignment-baseline="text-before-edge"
-            x={offset}
+            x={$gapSize}
         >{y}</text>
     </g>    
 {/if}
 
-<text x=100 y=100>{$mywidth}</text>
 
 <g fill="white" stroke="currentColor" stroke-width="1.5">
     {#each data as d, i}
